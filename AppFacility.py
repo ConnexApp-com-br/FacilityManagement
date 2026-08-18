@@ -56,7 +56,7 @@ if enviar:
                     smtp.login(email_remetente, senha_app)
                     smtp.send_message(msg)
                 
-                st.success("✅ Ordem de Serviço enviada com sucesso para a equipe de manutenção!")
+                st.success("✅ Ordem de Serviço enviada com sucesso para a equipe de Facility !")
                 
             except Exception as e:
                 st.error(f"Erro ao enviar o e-mail: {e}")
