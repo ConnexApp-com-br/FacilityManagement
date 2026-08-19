@@ -27,14 +27,17 @@ if enviar:
             try:
                 # Configuração do E-mail (Exemplo usando Gmail)
                 # Dica: No Gmail, utilize uma "Senha de App" (App Password) nas configurações de segurança da sua conta
-                email_remetente = "atendimento@automacel.com"
-                senha_app = "Cofat1234@"
-                email_destino = "felipe.campos@cofat.com"
-                
+
+                REMETENTE = st.secrets["EMAIL_REMETENTE"]
+                KEY = st.secrets["SENHA_EMAIL"]
+                DESTINO = st.secrets["EMAIL_DESTINO"]
+                SERVIDOR_SMTP = st.secrets["SMTP_SERVER"]
+                PORTA_SMTP = st.secrets["SMTP_PORT"]
+               
                 msg = EmailMessage()
                 msg['Subject'] = f"🚨 Nova OS: {maquina} - {tipo_problema}"
-                msg['From'] = email_remetente
-                msg['To'] = email_destino
+                msg['From'] = REMETENTE
+                msg['To'] = DESTINO
                 
                 corpo_email = f"""
                 Foi aberta uma nova Ordem de Serviço via QR Code:
@@ -52,8 +55,8 @@ if enviar:
                     msg.add_attachment(dados_foto, maintype='image', subtype='jpeg', filename=nome_arquivo)
                 
                 # Conecta no servidor SMTP do e-mail e envia
-                with smtplib.SMTP_SSL('smtp.hostinger.com', 465) as smtp:
-                    smtp.login(email_remetente, senha_app)
+                with smtplib.SMTP_SSL(SERVIDOR_SMTP, PORTA_SMTP) as smtp:
+                    smtp.login(REMETENTE, KEY)
                     smtp.send_message(msg)
                 
                 st.success("✅ Ordem de Serviço enviada com sucesso para a equipe de Facility !")
