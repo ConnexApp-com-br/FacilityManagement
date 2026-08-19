@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ordem de Serviço</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4 font-sans max-w-md mx-auto">
+
+  <div class="bg-white p-6 rounded-xl shadow-md mt-6">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">🛠️ Abertura de O.S.</h2>
+    
+    <form id="osForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Equipamento</label>
+        <select id="maquina" class="w-full mt-1 p-2 border rounded-lg bg-gray-50">
+          <option>Torno CNC 01</option>
+          <option>Injetora 04</option>
+          <option>Esteira de Embalagem</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Tipo de Problema</label>
+        <select id="tipo" class="w-full mt-1 p-2 border rounded-lg bg-gray-50">
+          <option>Falha Elétrica</option>
+          <option>Problema Mecânico</option>
+          <option>Outros</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Descrição</label>
+        <textarea id="descricao" required class="w-full mt-1 p-2 border rounded-lg bg-gray-50" rows="3"></textarea>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Foto da Falha</label>
+        <input type="file" id="fotoInput" accept="image/*" capture="environment" class="w-full mt-1 text-sm text-gray-500">
+      </div>
+
+      <button type="submit" id="btnEnviar" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700">
+        Enviar Chamado
+      </button>
+    </form>
+    
+    <div id="statusMsg" class="mt-4 text-center text-sm font-medium hidden"></div>
+  </div>
+
+  <script>
+    const URL_DO_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbyr9QmsTeLKgj3FEuVXRae_SKtP6hTEPUUCaLq4wfVFBZ0dAfV0YKocXnr-8UinUE4/exec";
+
+    document.getElementById('osForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const btn = document.getElementById('btnEnviar');
+      const status = document.getElementById('statusMsg');
+      
+      btn.disabled = true;
+      btn.innerText = "Enviando...";
+      status.classList.remove('hidden');
+      status.innerText = "Processando envio e foto...";
+      status.className = "mt-4 text-center text-sm text-blue-600 font-medium";
+
+      const fileInput = document.getElementById('fotoInput');
+      let fotoBase64 = "";
+      let nomeFoto = "";
+
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        nomeFoto = file.name;
+        fotoBase64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
+      }
+
+      const payload = {
+        maquina: document.getElementById('maquina').value,
+        tipo: document.getElementById('tipo').value,
+        descricao: document.getElementById('descricao').value,
+        fotoBase64: fotoBase64,
+        nomeFoto: nomeFoto
+      };
+
+      try {
+        await fetch(URL_DO_GOOGLE_SCRIPT, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        status.innerText = "✅ Ordem de Serviço enviada com sucesso!";
+        status.className = "mt-4 text-center text-sm text-green-600 font-medium";
+        document.getElementById('osForm').reset();
+      } catch (err) {
+        status.innerText = "❌ Erro ao enviar. Tente novamente.";
+        status.className = "mt-4 text-center text-sm text-red-600 font-medium";
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Enviar Chamado";
+      }
+    });
+  </script>
+</body>
+</html>
