@@ -4,11 +4,28 @@ from email.message import EmailMessage
 
 st.set_page_config(page_title="Ordem de Serviço - Manutenção", page_icon="🛠️", layout="centered")
 
+# CSS ATUALIZADO: Esconde a barra superior, menu do GitHub, rodapé e o ícone de deploy
 esconder_menu_estilo = """
     <style>
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    /* Esconde o cabeçalho superior inteiro (onde fica o menu e o ícone do GitHub) */
+    [data-testid="stHeader"] {
+        display: none !important;
+    }
+    
+    /* Esconde o rodapé padrão 'Made with Streamlit' */
+    footer {
+        display: none !important;
+    }
+    
+    /* Esconde o menu de ações/hambúrguer se ele estiver renderizado fora da header */
+    #MainMenu {
+        visibility: hidden !important;
+    }
+    
+    /* Remove o espaçamento superior que sobrava após esconder a barra */
+    .block-container {
+        padding-top: 2rem !important;
+    }
     </style>
     """
 st.markdown(esconder_menu_estilo, unsafe_allow_html=True)
