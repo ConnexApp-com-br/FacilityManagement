@@ -2,6 +2,15 @@ import streamlit as st
 import smtplib
 from email.message import EmailMessage
 
+esconder_menu_estilo = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    </style>
+    """
+st.markdown(esconder_menu_estilo, unsafe_allow_html=True)
+
 st.set_page_config(page_title="Ordem de Serviço - Manutenção", page_icon="🛠️", layout="centered")
 
 st.title("🛠️ Abertura de Ordem de Serviço")
